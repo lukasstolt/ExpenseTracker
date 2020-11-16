@@ -12,13 +12,6 @@ namespace ExpenseTracker.API.Data
 		public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) {}
 
 		public DbSet<Budget> Budgets { get; set; }
-
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		{
-		}
-
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-		}
+		public DbSet<Category> Categories { get; set; }
 	}
 }

@@ -11,7 +11,7 @@ namespace ExpenseTracker.API.Models
 		[Key]
 		public int Id { get; set; }
 		[Required]
-		public DateTime Month { get; set; }
+		public DateTime DateTime { get; set; }
 		[Required]
 		public List<BudgetItem> Expenses { get; set; }
 		[Required]
