@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ExpenseTracker.API.Data;
+using ExpenseTracker.API.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,14 +33,14 @@ namespace ExpenseTracker.API
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DatabaseContext context)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DatabaseContext db)
 		{
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 			}
 
-			context.Database.EnsureCreated();
+			DbInit(db);
 
 			app.UseHttpsRedirection();
 
@@ -51,6 +52,36 @@ namespace ExpenseTracker.API
 			{
 				endpoints.MapControllers();
 			});
+		}
+
+		private void DbInit(DatabaseContext db)
+		{
+			db.Database.EnsureCreated();
+
+			// Create standard categories
+			if(db.Categories.FirstOrDefault() == null)
+			{
+				// TODO - flytta till konfigurationsfil
+				db.Categories.Add(new Category { Name = "Boende" });
+				db.Categories.Add(new Category { Name = "Hem" });
+				db.Categories.Add(new Category { Name = "Mat" });
+				db.Categories.Add(new Category { Name = "Hälsa / skönhet" });
+
+				db.SaveChanges();
+			}
+
+			if(db.Budgets.FirstOrDefault() == null)
+			{
+				db.Budgets.Add(new Budget
+				{
+					Id = 1,
+					Income = new List<BudgetItem>(),
+					Expenses = new List<BudgetItem>(),
+					DateTime = new DateTime(0)
+				});
+
+				db.SaveChanges();
+			}
 		}
 	}
 }

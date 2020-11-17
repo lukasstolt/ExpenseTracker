@@ -87,7 +87,7 @@ namespace ExpenseTracker.API.Services
 		{
 			var latestBudget = _db.Budgets.OrderByDescending(b => b.Id).FirstOrDefault();
 
-			if(latestBudget == default || SameMonth(latestBudget.DateTime, DateTime.Now))
+			if(latestBudget == default || !SameMonth(latestBudget.DateTime, DateTime.Now))
 			{
 				var newBudget = new Budget
 				{
