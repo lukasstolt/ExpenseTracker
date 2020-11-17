@@ -44,7 +44,15 @@ namespace ExpenseTracker.API.Services
 		/// <param name="budgetItem"></param>
 		public void AddIncome(int id, BudgetItem budgetItem)
 		{
-			_db.Budgets.SingleOrDefault(b => b.Id == id)?.Income.Add(budgetItem);
+			var budget = _db.Budgets.SingleOrDefault(b => b.Id == id);
+
+			if (budget == null)
+				throw new Exception("Invalid id");
+
+			if (budget.Income == null)
+				budget.Income = new List<BudgetItem>();
+
+			budget.Income.Add(budgetItem);
 			_db.SaveChanges();
 		}
 
@@ -55,7 +63,15 @@ namespace ExpenseTracker.API.Services
 		/// <param name="budgetItem"></param>
 		public void AddExpense(int id, BudgetItem budgetItem)
 		{
-			_db.Budgets.SingleOrDefault(b => b.Id == id)?.Expenses.Add(budgetItem);
+			var budget = _db.Budgets.SingleOrDefault(b => b.Id == id);
+
+			if (budget == null)
+				throw new Exception("Invalid id");
+
+			if (budget.Expenses == null)
+				budget.Expenses = new List<BudgetItem>();
+
+			budget.Expenses.Add(budgetItem);
 			_db.SaveChanges();
 		}
 
@@ -75,7 +91,7 @@ namespace ExpenseTracker.API.Services
 		/// <returns></returns>
 		public List<Category> GetCategories()
 		{
-			throw new NotImplementedException();
+			return _db.Categories.ToList();
 		}
 
 		#region Private Helpers

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExpenseTracker.API.Data;
 using ExpenseTracker.API.Models;
+using ExpenseTracker.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -30,6 +31,7 @@ namespace ExpenseTracker.API
 		{
 			services.AddDbContext<DatabaseContext>(options => options.UseSqlite(Configuration["ConnectionStrings:DefaultConnection"]));
 			services.AddControllers();
+			services.AddScoped<IBudgetService, BudgetService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,8 +77,6 @@ namespace ExpenseTracker.API
 				db.Budgets.Add(new Budget
 				{
 					Id = 1,
-					Income = new List<BudgetItem>(),
-					Expenses = new List<BudgetItem>(),
 					DateTime = new DateTime(0)
 				});
 
