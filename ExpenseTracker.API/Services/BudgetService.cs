@@ -42,7 +42,7 @@ namespace ExpenseTracker.API.Services
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="budgetItem"></param>
-		public void AddIncome(int id, BudgetItem budgetItem)
+		public void AddIncome(int id, Income income)
 		{
 			var budget = _db.Budgets.SingleOrDefault(b => b.Id == id);
 
@@ -50,9 +50,11 @@ namespace ExpenseTracker.API.Services
 				throw new Exception("Invalid id");
 
 			if (budget.Income == null)
-				budget.Income = new List<BudgetItem>();
+				budget.Income = new List<Income>();
 
-			budget.Income.Add(budgetItem);
+			income.Budget = budget;
+
+			budget.Income.Add(income);
 			_db.SaveChanges();
 		}
 
@@ -61,7 +63,7 @@ namespace ExpenseTracker.API.Services
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="budgetItem"></param>
-		public void AddExpense(int id, BudgetItem budgetItem)
+		public void AddExpense(int id, Expense expense)
 		{
 			var budget = _db.Budgets.SingleOrDefault(b => b.Id == id);
 
@@ -69,9 +71,11 @@ namespace ExpenseTracker.API.Services
 				throw new Exception("Invalid id");
 
 			if (budget.Expenses == null)
-				budget.Expenses = new List<BudgetItem>();
+				budget.Expenses = new List<Expense>();
 
-			budget.Expenses.Add(budgetItem);
+			expense.Budget = budget;
+
+			budget.Expenses.Add(expense);
 			_db.SaveChanges();
 		}
 
@@ -108,8 +112,8 @@ namespace ExpenseTracker.API.Services
 				var newBudget = new Budget
 				{
 					DateTime = DateTime.Now,
-					Income = new List<BudgetItem>(),
-					Expenses = new List<BudgetItem>()
+					Income = new List<Income>(),
+					Expenses = new List<Expense>()
 				};
 
 				_db.Add(newBudget);

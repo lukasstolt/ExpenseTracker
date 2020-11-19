@@ -52,34 +52,34 @@ namespace ExpenseTracker.API.Controllers
 
 		// POST api/Budgets/3/AddIncome
 		[HttpPost("{id}/AddIncome")]
-		public IActionResult AddIncome(int id, [FromBody] BudgetItem budgetItem)
+		public IActionResult AddIncome(int id, [FromBody] Income income)
 		{
 			try
 			{
-				_budgetService.AddIncome(id, budgetItem);
+				_budgetService.AddIncome(id, income);
 			}
 			catch
 			{
 				return BadRequest();
 			}
 
-			return Created($"/{id}", budgetItem);
+			return Created($"/{id}", income);
 		}
 
 		// POST api/Budgets/3/AddExpense
 		[HttpPost("{id}/AddExpense")]
-		public IActionResult AddExpense(int id, [FromBody] BudgetItem budgetItem)
+		public IActionResult AddExpense(int id, [FromBody] Expense expense)
 		{
 			try
 			{
-				_budgetService.AddExpense(id, budgetItem);
+				_budgetService.AddExpense(id, expense);
 			}
 			catch
 			{
 				return BadRequest();
 			}
 
-			return Created($"/{id}", budgetItem);
+			return Created($"/{id}", expense);
 		}
 
 		// POST api/Budgets/AddCategory

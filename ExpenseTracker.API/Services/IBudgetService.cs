@@ -10,8 +10,8 @@ namespace ExpenseTracker.API.Services
 	{
 		Budget GetBudgetById(int id);
 		Budget GetBudgetByDate(DateTime dateTime);
-		void AddIncome(int id, BudgetItem budgetItem);
-		void AddExpense(int id, BudgetItem budgetItem);
+		void AddIncome(int id, Income income);
+		void AddExpense(int id, Expense expense);
 		void AddCategory(Category category);
 		List<Category> GetCategories();
 	}
