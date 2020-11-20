@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpenseTracker.API", "ExpenseTracker.API\ExpenseTracker.API.csproj", "{28BC7F12-B65F-46F0-B7B8-5C4826F3C56D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseTracker.Shared", "ExpenseTracker.Shared\ExpenseTracker.Shared.csproj", "{4BD5B842-154E-4B04-8433-FAF8954BC828}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpenseTracker.Shared", "ExpenseTracker.Shared\ExpenseTracker.Shared.csproj", "{4BD5B842-154E-4B04-8433-FAF8954BC828}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpenseTracker.Client", "ExpenseTracker.Client\ExpenseTracker.Client.csproj", "{BC3111D3-D826-4D46-80BA-82142EA89EEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{4BD5B842-154E-4B04-8433-FAF8954BC828}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BD5B842-154E-4B04-8433-FAF8954BC828}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BD5B842-154E-4B04-8433-FAF8954BC828}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC3111D3-D826-4D46-80BA-82142EA89EEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC3111D3-D826-4D46-80BA-82142EA89EEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC3111D3-D826-4D46-80BA-82142EA89EEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC3111D3-D826-4D46-80BA-82142EA89EEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
