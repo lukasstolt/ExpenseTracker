@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace ExpenseTracker.API.Models
+namespace ExpenseTracker.Shared.Models
 {
-	public class Income
+	public class Expense
 	{
 		[Key]
 		public int Id { get; set; }

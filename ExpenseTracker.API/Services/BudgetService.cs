@@ -1,5 +1,5 @@
 ﻿using ExpenseTracker.API.Data;
-using ExpenseTracker.API.Models;
+using ExpenseTracker.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace ExpenseTracker.API.Services
 		public Budget GetBudgetById(int id)
 		{
 			return _db.Budgets
-				.Include(b => b.Income)
+				.Include(b => b.Incomes)
 				.ThenInclude(i => i.Category)
 				.Include(b => b.Expenses)
 				.ThenInclude(e => e.Category)
@@ -41,7 +41,7 @@ namespace ExpenseTracker.API.Services
 		public Budget GetBudgetByDate(DateTime dateTime)
 		{
 			return _db.Budgets
-				.Include(b => b.Income)
+				.Include(b => b.Incomes)
 				.ThenInclude(i => i.Category)
 				.Include(b => b.Expenses)
 				.ThenInclude(e => e.Category)
@@ -60,12 +60,12 @@ namespace ExpenseTracker.API.Services
 			if (budget == null)
 				throw new Exception("Invalid id");
 
-			if (budget.Income == null)
-				budget.Income = new List<Income>();
+			if (budget.Incomes == null)
+				budget.Incomes = new List<Income>();
 
 			income.Budget = budget;
 
-			budget.Income.Add(income);
+			budget.Incomes.Add(income);
 			_db.SaveChanges();
 		}
 
@@ -123,7 +123,7 @@ namespace ExpenseTracker.API.Services
 				var newBudget = new Budget
 				{
 					DateTime = DateTime.Now,
-					Income = new List<Income>(),
+					Incomes = new List<Income>(),
 					Expenses = new List<Expense>()
 				};
 

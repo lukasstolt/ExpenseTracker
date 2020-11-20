@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ExpenseTracker.API.Data;
-using ExpenseTracker.API.Models;
+using ExpenseTracker.Shared.Models;
 using ExpenseTracker.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

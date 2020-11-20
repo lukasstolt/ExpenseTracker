@@ -1,4 +1,4 @@
-﻿using ExpenseTracker.API.Models;
+﻿using ExpenseTracker.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

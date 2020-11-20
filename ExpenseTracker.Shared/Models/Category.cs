@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExpenseTracker.API.Models
+namespace ExpenseTracker.Shared.Models
 {
 	public class Category
 	{

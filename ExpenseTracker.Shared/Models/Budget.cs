@@ -3,25 +3,24 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace ExpenseTracker.API.Models
+namespace ExpenseTracker.Shared.Models
 {
-	public class Expense
+	public class Budget
 	{
 		[Key]
 		public int Id { get; set; }
 		[Required]
-		public string Name { get; set; }
-		[Required]
-		public decimal Amount { get; set; }
-		[Required]
 		public DateTime DateTime { get; set; }
 		[Required]
-		public Category Category { get; set; }
+		public ICollection<Expense> Expenses { get; set; }
+		[Required]
+		public ICollection<Income> Incomes { get; set; }
 
-		[JsonIgnore]
-		public Budget Budget { get; set; }
+		public decimal AmountLeft()
+		{
+			return Incomes.Sum(i => i.Amount) - Expenses.Sum(e => e.Amount);
+		}
 	}
 }
