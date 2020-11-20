@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTracker.API.Services
 {
@@ -24,7 +25,12 @@ namespace ExpenseTracker.API.Services
 		/// <returns></returns>
 		public Budget GetBudgetById(int id)
 		{
-			return _db.Budgets.SingleOrDefault(b => b.Id == id);
+			return _db.Budgets
+				.Include(b => b.Income)
+				.ThenInclude(i => i.Category)
+				.Include(b => b.Expenses)
+				.ThenInclude(e => e.Category)
+				.SingleOrDefault(b => b.Id == id);
 		}
 
 		/// <summary>
@@ -34,7 +40,12 @@ namespace ExpenseTracker.API.Services
 		/// <returns></returns>
 		public Budget GetBudgetByDate(DateTime dateTime)
 		{
-			return _db.Budgets.SingleOrDefault(b => SameMonth(b.DateTime, dateTime));
+			return _db.Budgets
+				.Include(b => b.Income)
+				.ThenInclude(i => i.Category)
+				.Include(b => b.Expenses)
+				.ThenInclude(e => e.Category)
+				.SingleOrDefault(b => SameMonth(b.DateTime, dateTime));
 		}
 
 		/// <summary>

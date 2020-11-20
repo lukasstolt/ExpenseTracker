@@ -14,9 +14,9 @@ namespace ExpenseTracker.API.Models
 		[Required]
 		public DateTime DateTime { get; set; }
 		[Required]
-		public List<Expense> Expenses { get; set; }
+		public ICollection<Expense> Expenses { get; set; }
 		[Required]
-		public List<Income> Income { get; set; }
+		public ICollection<Income> Income { get; set; }
 
 		public decimal AmountLeft()
 		{

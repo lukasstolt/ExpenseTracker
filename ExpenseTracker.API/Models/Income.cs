@@ -22,7 +22,6 @@ namespace ExpenseTracker.API.Models
 		public Category Category { get; set; }
 
 		[JsonIgnore]
-		[ForeignKey("BudgetId")]
 		public Budget Budget { get; set; }
 	}
 }
