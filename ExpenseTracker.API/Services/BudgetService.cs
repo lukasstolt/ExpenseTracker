@@ -45,7 +45,7 @@ namespace ExpenseTracker.API.Services
 				.ThenInclude(i => i.Category)
 				.Include(b => b.Expenses)
 				.ThenInclude(e => e.Category)
-				.SingleOrDefault(b => SameMonth(b.DateTime, dateTime));
+				.SingleOrDefault(b => b.DateTime.Year == dateTime.Year && b.DateTime.Month == dateTime.Month);
 		}
 
 		/// <summary>

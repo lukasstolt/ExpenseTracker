@@ -41,7 +41,9 @@ namespace ExpenseTracker.API
 				options.AddPolicy("CorsPolicy",
 					builder =>
 					{
-						builder.AllowAnyOrigin();
+						builder.AllowAnyOrigin()
+						.AllowAnyMethod()
+						.AllowAnyHeader();
 					});
 			});
 		}

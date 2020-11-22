@@ -1,0 +1,69 @@
+﻿@inject IMatDialogService MatDialogService
+@inject HttpClient Http
+
+
+<MatDialogTitle style="display: flex; align-items: center;">
+    <div style="flex: 1;">Add Expense</div>
+</MatDialogTitle>
+<MatDialogContent>
+    @if (categories != null)
+    {
+        <MatList>
+            <MatListItem>
+                <MatTextField Label="Namn" @bind-Value="Expense.Name" />
+            </MatListItem>
+        
+            <MatListItem Class="mt-3">
+                <MatSelectItem Label="Kategori" @bind-Value="@Expense.Category" Items="@categories">
+                    <ItemTemplate>
+                        <span>@context?.Name</span>
+                    </ItemTemplate>
+                </MatSelectItem>
+            </MatListItem>
+        
+            <MatListItem Class="mt-3">
+                <MatNumericUpDownField Label="Summa"
+                                       @bind-Value=@Expense.Amount
+                                       FieldType="MatNumericUpDownFieldType.Currency"
+                                       DecimalPlaces=2>
+                </MatNumericUpDownField>
+            </MatListItem>
+        
+            <MatListItem Class="mt-3">
+                <MatButton OnClick="@(_ => CloseDialog())">Cancel</MatButton>
+                <MatButton OnClick="@(_ => AddItem())">Add</MatButton>
+            </MatListItem>
+        </MatList>
+    }
+</MatDialogContent>
+<MatDialogActions>
+
+</MatDialogActions>
+
+@code
+{
+    [Parameter]
+    public ExpenseTracker.Shared.Models.Expense Expense { get; set; } = new Expense();
+
+    private ExpenseTracker.Shared.Models.Category[] categories;
+
+    [CascadingParameter]
+    public MatDialogReference DialogReference { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await Http.GetFromJsonAsync<ExpenseTracker.Shared.Models.Category[]>(
+            "https://localhost:44398/api/Budgets/Categories");
+    }
+
+
+    void CloseDialog()
+    {
+        DialogReference.Close(false);
+    }
+
+    async Task AddItem()
+    {
+        DialogReference.Close(Expense);
+    }
+}

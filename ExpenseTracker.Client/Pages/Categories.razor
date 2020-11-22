@@ -1,0 +1,58 @@
+﻿@page "/Categories"
+@inject HttpClient Http
+@inject IMatDialogService MatDialogService
+
+<h1 class="mb-5">Kategorier</h1>
+
+@if (categories != null)
+{
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell">
+            <MatTable Items="@categories" ShowPaging="false" class="mat-elevation-z5">
+                <MatTableHeader>
+                    <th>Id</th>
+                    <th>Namn</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.Id</td>
+                    <td>@context.Name</td>
+                </MatTableRow>
+            </MatTable>
+            <MatButton OnClick="@(_ => OpenAddCategoryDialog())">Lägg till kategori</MatButton>
+        </div>
+    </div>
+</div>
+}
+
+@code
+{
+    private ExpenseTracker.Shared.Models.Category[] categories;
+
+    protected override async Task OnInitializedAsync() => await GetCategories();
+
+    private async Task GetCategories() =>
+        categories = await Http.GetFromJsonAsync<ExpenseTracker.Shared.Models.Category[]>(
+            "https://localhost:44398/api/Budgets/Categories");
+
+    async Task OpenAddCategoryDialog()
+    {
+        try
+        {
+            var result = await MatDialogService.OpenAsync(typeof(AddCategoryDialog), null);
+
+            if(result is Category)
+            {
+                var response = await Http.PostAsJsonAsync<ExpenseTracker.Shared.Models.Category>($"" +
+                    $"https://localhost:44398/api/Budgets/AddCategory", (Category) result);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Created)
+                    await GetCategories();
+                else
+                    Console.WriteLine("ERROR");
+            }
+
+        }
+        catch { }
+    }
+}

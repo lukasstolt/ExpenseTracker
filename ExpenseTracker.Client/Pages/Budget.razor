@@ -1,8 +1,8 @@
 ﻿@page "/budget"
-@using System.Net.Http
 @inject HttpClient Http
+@inject IMatDialogService MatDialogService
 
-<h3>Budget</h3>
+<h1 class="mb-5">Budget</h1>
 
 @if (budget != null)
 {
@@ -10,7 +10,7 @@
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell">
                 <h4>Inkomster</h4>
-                <MatTable Items="@budget.Incomes" ShowPaging="false"  class="mat-elevation-z5">
+                <MatTable Items="@budget.Incomes" ShowPaging="false" class="mat-elevation-z5">
                     <MatTableHeader>
                         <th>Kategori</th>
                         <th>Summa</th>
@@ -20,10 +20,11 @@
                         <td>@String.Format("{0:C2}", @context.Amount)</td>
                     </MatTableRow>
                 </MatTable>
+                <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Income))">Add Income</MatButton>
             </div>
             <div class="mat-layout-grid-cell">
                 <h4>Utgifter</h4>
-                <MatTable Items="@budget.Expenses" ShowPaging="false"  class="mat-elevation-z5">
+                <MatTable Items="@budget.Expenses" ShowPaging="false" class="mat-elevation-z5">
                     <MatTableHeader>
                         <th>Kategori</th>
                         <th>Summa</th>
@@ -33,6 +34,7 @@
                         <td>@String.Format("{0:C2}", @context.Amount)</td>
                     </MatTableRow>
                 </MatTable>
+                <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Expense))">Add Expense</MatButton>
             </div>
         </div>
     </div>
@@ -46,4 +48,53 @@
 
     private async Task GetBudget() =>
         budget = await Http.GetFromJsonAsync<ExpenseTracker.Shared.Models.Budget>("https://localhost:44398/api/Budgets/Base");
+
+    async Task OpenAddBudgetItemDialog(BudgetItemType budgetItemType)
+    {
+        try
+        {
+            dynamic result;
+
+            if (budgetItemType == BudgetItemType.Expense)
+                result = await MatDialogService.OpenAsync(typeof(AddExpenseDialog), null);
+            else
+                result = await MatDialogService.OpenAsync(typeof(AddIncomeDialog), null);
+
+            if (result is ExpenseTracker.Shared.Models.Expense)
+            {
+                var expense = (ExpenseTracker.Shared.Models.Expense)result;
+
+                expense.DateTime = new DateTime(0);
+
+                var response = await Http.PostAsJsonAsync<ExpenseTracker.Shared.Models.Expense>
+                    ($"https://localhost:44398/api/Budgets/{budget.Id}/AddExpense", expense);
+
+                if (response.StatusCode != System.Net.HttpStatusCode.Created)
+                    Console.WriteLine("ERROR");
+                else
+                    await GetBudget();
+            }
+            else if (result is ExpenseTracker.Shared.Models.Income)
+            {
+                var income = (ExpenseTracker.Shared.Models.Income)result;
+
+                income.DateTime = new DateTime(0);
+
+                var response = await Http.PostAsJsonAsync<ExpenseTracker.Shared.Models.Income>
+                    ($"https://localhost:44398/api/Budgets/{budget.Id}/AddIncome", income);
+
+                if (response.StatusCode != System.Net.HttpStatusCode.Created)
+                    Console.WriteLine("ERROR");
+                else
+                    await GetBudget();
+            }
+        }
+        catch { }
+    }
+
+    enum BudgetItemType
+    {
+        Income,
+        Expense
+    }
 }
