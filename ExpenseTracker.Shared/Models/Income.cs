@@ -8,20 +8,8 @@ using System.Threading.Tasks;
 
 namespace ExpenseTracker.Shared.Models
 {
-	public class Income
+	public class Income : BudgetItem
 	{
-		[Key]
-		public int Id { get; set; }
-		[Required]
-		public string Name { get; set; }
-		[Required]
-		public decimal Amount { get; set; }
-		[Required]
-		public DateTime DateTime { get; set; }
-		[Required]
-		public Category Category { get; set; }
-
-		[JsonIgnore]
-		public Budget Budget { get; set; }
+		
 	}
 }
