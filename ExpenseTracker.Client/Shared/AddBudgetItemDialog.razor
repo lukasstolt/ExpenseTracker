@@ -3,18 +3,18 @@
 
 
 <MatDialogTitle style="display: flex; align-items: center;">
-    <div style="flex: 1;">Lägg till inkomst</div>
+    <div style="flex: 1;">Add Expense</div>
 </MatDialogTitle>
 <MatDialogContent>
     @if (categories != null)
     {
         <MatList>
             <MatListItem>
-                <MatTextField Label="Namn" @bind-Value="Income.Name" />
+                <MatTextField Label="Namn" @bind-Value="BudgetItem.Name" />
             </MatListItem>
 
             <MatListItem Class="mt-3">
-                <MatSelectItem Label="Kategori" @bind-Value="@Income.Category" Items="@categories">
+                <MatSelectItem Label="Kategori" @bind-Value="@BudgetItem.Category" Items="@categories">
                     <ItemTemplate>
                         <span>@context?.Name</span>
                     </ItemTemplate>
@@ -23,15 +23,15 @@
 
             <MatListItem Class="mt-3">
                 <MatNumericUpDownField Label="Summa"
-                                       @bind-Value=@Income.Amount
+                                       @bind-Value=@BudgetItem.Amount
                                        FieldType="MatNumericUpDownFieldType.Currency"
                                        DecimalPlaces=2>
                 </MatNumericUpDownField>
             </MatListItem>
 
             <MatListItem Class="mt-3">
-                <MatButton OnClick="@(_ => CloseDialog())">Avbryt</MatButton>
-                <MatButton OnClick="@(_ => AddItem())">Lägg till</MatButton>
+                <MatButton OnClick="@(_ => CloseDialog())">Cancel</MatButton>
+                <MatButton OnClick="@(_ => AddItem())">Add</MatButton>
             </MatListItem>
         </MatList>
     }
@@ -42,9 +42,7 @@
 
 @code
 {
-    [Parameter]
-    public ExpenseTracker.Shared.Models.Income Income { get; set; } = new Income();
-
+    public ExpenseTracker.Shared.Models.BudgetItem BudgetItem { get; set; }
     private ExpenseTracker.Shared.Models.Category[] categories;
 
     [CascadingParameter]
@@ -52,18 +50,19 @@
 
     protected override async Task OnInitializedAsync()
     {
+        BudgetItem = new BudgetItem();
+
         categories = await Http.GetFromJsonAsync<ExpenseTracker.Shared.Models.Category[]>(
             "https://localhost:44398/api/Budgets/Categories");
     }
 
-
     void CloseDialog()
     {
-        DialogReference.Close(false);
+        DialogReference.Close(null);
     }
 
-    async Task AddItem()
+    void AddItem()
     {
-        DialogReference.Close(Income);
+        DialogReference.Close(BudgetItem);
     }
 }

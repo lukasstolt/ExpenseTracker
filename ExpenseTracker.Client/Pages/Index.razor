@@ -10,7 +10,7 @@
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell">
                 <h4>Inkomster</h4>
-                <MatTable Items="@budget.Incomes" ShowPaging="false" class="mat-elevation-z5">
+                <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Income)" ShowPaging="false" class="mat-elevation-z5">
                     <MatTableHeader>
                         <th>Kategori</th>
                         <th>Summa</th>
@@ -24,7 +24,7 @@
             </div>
             <div class="mat-layout-grid-cell">
                 <h4>Utgifter</h4>
-                <MatTable Items="@budget.Expenses" ShowPaging="true" PageSize="5" class="mat-elevation-z5">
+                <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense)" ShowPaging="true" PageSize="5" class="mat-elevation-z5">
                     <MatTableHeader>
                         <th>Kategori</th>
                         <th>Summa</th>
@@ -58,48 +58,25 @@ else
     {
         try
         {
-            dynamic result;
+            BudgetItem result = (BudgetItem)await MatDialogService.OpenAsync(typeof(AddBudgetItemDialog), new MatDialogOptions());
 
-            if (budgetItemType == BudgetItemType.Expense)
-                result = await MatDialogService.OpenAsync(typeof(AddExpenseDialog), null);
+            if (result == null)
+                return;
+
+            result.DateTime = new DateTime(0);
+            result.BudgetItemType = budgetItemType;
+
+            var response = await Http.PostAsJsonAsync<ExpenseTracker.Shared.Models.BudgetItem>
+                ($"https://localhost:44398/api/Budgets/{budget.Id}/AddBudgetItem", result);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.Created)
+                Console.WriteLine("Not created!");
             else
-                result = await MatDialogService.OpenAsync(typeof(AddIncomeDialog), null);
-
-            if (result is ExpenseTracker.Shared.Models.Expense)
-            {
-                var expense = (ExpenseTracker.Shared.Models.Expense) result;
-
-                expense.DateTime = DateTime.Now;
-
-                var response = await Http.PostAsJsonAsync<ExpenseTracker.Shared.Models.Expense>
-                    ($"https://localhost:44398/api/Budgets/{budget.Id}/AddExpense", expense);
-
-                if (response.StatusCode != System.Net.HttpStatusCode.Created)
-                    Console.WriteLine("ERROR");
-                else
-                    await GetBudget();
-            }
-            else if(result is ExpenseTracker.Shared.Models.Income)
-            {
-                var income = (ExpenseTracker.Shared.Models.Income) result;
-
-                income.DateTime = DateTime.Now;
-
-                var response = await Http.PostAsJsonAsync<ExpenseTracker.Shared.Models.Income>
-                    ($"https://localhost:44398/api/Budgets/{budget.Id}/AddIncome", income);
-
-                if (response.StatusCode != System.Net.HttpStatusCode.Created)
-                    Console.WriteLine("ERROR");
-                else
-                    await GetBudget();
-            }
+                await GetBudget();
         }
-        catch {}
-    }
-
-    enum BudgetItemType
-    {
-        Income,
-        Expense
+        catch (Exception e) 
+        { 
+            Console.WriteLine(e.Message); 
+        }
     }
 }
