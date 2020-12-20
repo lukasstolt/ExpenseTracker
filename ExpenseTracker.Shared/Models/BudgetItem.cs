@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ExpenseTracker.Shared.Models
 {
-	public abstract class BudgetItem
+	public class BudgetItem
 	{
 		[Key]
 		public int Id { get; set; }
@@ -20,6 +20,8 @@ namespace ExpenseTracker.Shared.Models
 		public DateTime DateTime { get; set; }
 		[Required]
 		public Category Category { get; set; }
+		[Required]
+		public BudgetItemType BudgetItemType { get; set; }
 
 		[JsonIgnore]
 		public Budget Budget { get; set; }

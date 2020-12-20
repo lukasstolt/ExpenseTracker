@@ -26,9 +26,7 @@ namespace ExpenseTracker.API.Services
 		public Budget GetBudgetById(int id)
 		{
 			return _db.Budgets
-				.Include(b => b.Incomes)
-				.ThenInclude(i => i.Category)
-				.Include(b => b.Expenses)
+				.Include(b => b.BudgetItems)
 				.ThenInclude(e => e.Category)
 				.SingleOrDefault(b => b.Id == id);
 		}
@@ -41,52 +39,29 @@ namespace ExpenseTracker.API.Services
 		public Budget GetBudgetByDate(DateTime dateTime)
 		{
 			return _db.Budgets
-				.Include(b => b.Incomes)
-				.ThenInclude(i => i.Category)
-				.Include(b => b.Expenses)
+				.Include(b => b.BudgetItems)
 				.ThenInclude(e => e.Category)
 				.SingleOrDefault(b => b.DateTime.Year == dateTime.Year && b.DateTime.Month == dateTime.Month);
 		}
 
 		/// <summary>
-		/// Adds an income entry to budget with specified id
+		/// Adds a budget item to the specified budget
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="budgetItem"></param>
-		public void AddIncome(int id, Income income)
+		public void AddBudgetItem(int id, BudgetItem budgetItem)
 		{
 			var budget = _db.Budgets.SingleOrDefault(b => b.Id == id);
 
 			if (budget == null)
 				throw new Exception("Invalid id");
 
-			if (budget.Incomes == null)
-				budget.Incomes = new List<Income>();
+			if (budget.BudgetItems == null)
+				budget.BudgetItems = new List<BudgetItem>();
 
-			income.Budget = budget;
+			budgetItem.Budget = budget;
 
-			budget.Incomes.Add(income);
-			_db.SaveChanges();
-		}
-
-		/// <summary>
-		/// Adds an expense to budget with specified id
-		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="budgetItem"></param>
-		public void AddExpense(int id, Expense expense)
-		{
-			var budget = _db.Budgets.SingleOrDefault(b => b.Id == id);
-
-			if (budget == null)
-				throw new Exception("Invalid id");
-
-			if (budget.Expenses == null)
-				budget.Expenses = new List<Expense>();
-
-			expense.Budget = budget;
-
-			budget.Expenses.Add(expense);
+			budget.BudgetItems.Add(budgetItem);
 			_db.SaveChanges();
 		}
 
@@ -123,8 +98,7 @@ namespace ExpenseTracker.API.Services
 				var newBudget = new Budget
 				{
 					DateTime = DateTime.Now,
-					Incomes = new List<Income>(),
-					Expenses = new List<Expense>()
+					BudgetItems = new List<BudgetItem>()
 				};
 
 				_db.Add(newBudget);

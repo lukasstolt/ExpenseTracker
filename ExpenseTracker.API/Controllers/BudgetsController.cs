@@ -50,36 +50,21 @@ namespace ExpenseTracker.API.Controllers
 				return Ok(budget);
 		}
 
-		// POST api/Budgets/3/AddIncome
-		[HttpPost("{id}/AddIncome")]
-		public IActionResult AddIncome(int id, [FromBody] Income income)
+		// POST api/Budgets/3/AddBudgetItem
+		[HttpPost("{id}/AddBudgetItem")]
+		public IActionResult AddBudgetItem(int id, [FromBody] BudgetItem budgetItem)
 		{
 			try
 			{
-				_budgetService.AddIncome(id, income);
+				_budgetService.AddBudgetItem(id, budgetItem);
 			}
-			catch
+			catch (Exception e)
 			{
+				Console.WriteLine(e.Message);
 				return BadRequest();
 			}
 
-			return Created($"/{id}", income);
-		}
-
-		// POST api/Budgets/3/AddExpense
-		[HttpPost("{id}/AddExpense")]
-		public IActionResult AddExpense(int id, [FromBody] Expense expense)
-		{
-			try
-			{
-				_budgetService.AddExpense(id, expense);
-			}
-			catch
-			{
-				return BadRequest();
-			}
-
-			return Created($"/{id}", expense);
+			return Created($"/{id}", budgetItem);
 		}
 
 		// POST api/Budgets/AddCategory

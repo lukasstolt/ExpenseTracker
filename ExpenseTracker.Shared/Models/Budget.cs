@@ -14,13 +14,12 @@ namespace ExpenseTracker.Shared.Models
 		[Required]
 		public DateTime DateTime { get; set; }
 		[Required]
-		public ICollection<Expense> Expenses { get; set; }
-		[Required]
-		public ICollection<Income> Incomes { get; set; }
+		public ICollection<BudgetItem> BudgetItems { get; set; }
 
 		public decimal AmountLeft()
 		{
-			return Incomes.Sum(i => i.Amount) - Expenses.Sum(e => e.Amount);
+			return BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Income).Sum(i => i.Amount) - 
+				BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense).Sum(e => e.Amount);
 		}
 	}
 }
