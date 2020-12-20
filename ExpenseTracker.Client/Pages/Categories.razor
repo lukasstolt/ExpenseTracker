@@ -9,7 +9,7 @@
 <div class="mat-layout-grid">
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell">
-            <MatTable Items="@categories" ShowPaging="false" class="mat-elevation-z5">
+            <MatTable Items="@categories" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
                 <MatTableHeader>
                     <th>Id</th>
                     <th>Namn</th>
@@ -27,12 +27,11 @@
 
 @code
 {
-    private ExpenseTracker.Shared.Models.Category[] categories;
+    private Category[] categories;
 
     protected override async Task OnInitializedAsync() => await GetCategories();
 
-    private async Task GetCategories() =>
-        categories = await Http.GetFromJsonAsync<ExpenseTracker.Shared.Models.Category[]>(
+    private async Task GetCategories() => categories = await Http.GetFromJsonAsync<Category[]>(
             "https://localhost:44398/api/Budgets/Categories");
 
     async Task OpenAddCategoryDialog()
@@ -41,18 +40,20 @@
         {
             var result = await MatDialogService.OpenAsync(typeof(AddCategoryDialog), null);
 
-            if(result is Category)
-            {
-                var response = await Http.PostAsJsonAsync<ExpenseTracker.Shared.Models.Category>($"" +
-                    $"https://localhost:44398/api/Budgets/AddCategory", (Category) result);
+            if (result == null)
+                return;
 
-                if (response.StatusCode == System.Net.HttpStatusCode.Created)
-                    await GetCategories();
-                else
-                    Console.WriteLine("ERROR");
-            }
+            var response = await Http.PostAsJsonAsync<ExpenseTracker.Shared.Models.Category>(
+                $"https://localhost:44398/api/Budgets/AddCategory", (Category)result);
 
+            if (response.StatusCode != System.Net.HttpStatusCode.Created)
+                Console.WriteLine("Not created!");
+
+            await GetCategories();
         }
-        catch { }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

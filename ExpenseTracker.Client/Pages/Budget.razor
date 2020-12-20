@@ -10,7 +10,7 @@
         <div class="mat-layout-grid-inner">
             <div class="mat-layout-grid-cell">
                 <h4>Inkomster</h4>
-                <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Income)" ShowPaging="false" class="mat-elevation-z5">
+                <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Income)" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
                     <MatTableHeader>
                         <th>Kategori</th>
                         <th>Summa</th>
@@ -24,7 +24,7 @@
             </div>
             <div class="mat-layout-grid-cell">
                 <h4>Utgifter</h4>
-                <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense)" ShowPaging="false" class="mat-elevation-z5">
+                <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense)" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
                     <MatTableHeader>
                         <th>Kategori</th>
                         <th>Summa</th>
