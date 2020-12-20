@@ -80,7 +80,7 @@ namespace ExpenseTracker.API.Controllers
 				return BadRequest();
 			}
 
-			return CreatedAtRoute("Categories", category);
+			return Created($"/Categories", category);
 		}
 
 		[HttpGet("Categories")]
