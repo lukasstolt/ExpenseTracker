@@ -1,24 +1,12 @@
 ﻿@inject IMatDialogService MatDialogService
 @inject HttpClient Http
 
-
-<MatDialogTitle style="display: flex; align-items: center;">
-    <div style="flex: 1;">Lägg till kategori</div>
-</MatDialogTitle>
 <MatDialogContent>
-    <MatList>
-        <MatListItem>
-            <MatTextField Label="Namn" @bind-Value="Category.Name" />
-        </MatListItem>
-
-        <MatListItem Class="mt-3">
-            <MatButton OnClick="@(_ => CloseDialog())">Avbryt</MatButton>
-            <MatButton OnClick="@(_ => AddItem())">Lägg till</MatButton>
-        </MatListItem>
-    </MatList>
+    <MatTextField Label="Namn" @bind-Value="Category.Name" FullWidth="true"/>
 </MatDialogContent>
 <MatDialogActions>
-
+    <MatButton OnClick="@(_ => CloseDialog())">Avbryt</MatButton>
+    <MatButton OnClick="@(_ => AddItem())">Lägg till</MatButton>
 </MatDialogActions>
 
 @code

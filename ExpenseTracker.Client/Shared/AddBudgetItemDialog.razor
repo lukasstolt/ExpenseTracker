@@ -1,49 +1,40 @@
 ﻿@inject IMatDialogService MatDialogService
 @inject HttpClient Http
 
-
-<MatDialogTitle style="display: flex; align-items: center;">
-    <div style="flex: 1;">Add Expense</div>
-</MatDialogTitle>
 <MatDialogContent>
     @if (categories != null)
     {
-        <MatList>
-            <MatListItem>
-                <MatTextField Label="Namn" @bind-Value="BudgetItem.Name" />
-            </MatListItem>
+        <MatTextField Label="Beskrivning" @bind-Value="BudgetItem.Description" FullWidth="true" />
 
-            <MatListItem Class="mt-3">
-                <MatSelectItem Label="Kategori" @bind-Value="@BudgetItem.Category" Items="@categories">
-                    <ItemTemplate>
-                        <span>@context?.Name</span>
-                    </ItemTemplate>
-                </MatSelectItem>
-            </MatListItem>
+        <MatSelectItem Label="Kategori" @bind-Value="@BudgetItem.Category" Items="@categories" FullWidth="true" Class="mt-3">
+            <ItemTemplate>
+                <span>@context?.Name</span>
+            </ItemTemplate>
+        </MatSelectItem>
 
-            <MatListItem Class="mt-3">
-                <MatNumericUpDownField Label="Summa"
-                                       @bind-Value=@BudgetItem.Amount
-                                       FieldType="MatNumericUpDownFieldType.Currency"
-                                       DecimalPlaces=2>
-                </MatNumericUpDownField>
-            </MatListItem>
+        <MatNumericUpDownField Label="Summa"
+                               @bind-Value=@BudgetItem.Amount
+                               FieldType="MatNumericUpDownFieldType.Currency"
+                               DecimalPlaces=2
+                               FullWidth="true"
+                               Class="mt-3">
+        </MatNumericUpDownField>
 
-            <MatListItem Class="mt-3">
-                <MatButton OnClick="@(_ => CloseDialog())">Cancel</MatButton>
-                <MatButton OnClick="@(_ => AddItem())">Add</MatButton>
-            </MatListItem>
-        </MatList>
     }
 </MatDialogContent>
 <MatDialogActions>
-
+    @if (categories != null)
+    {
+        <MatButton OnClick="@(_ => CloseDialog())" Class="mt-3">Cancel</MatButton>
+        <MatButton OnClick="@(_ => AddItem())" Class="mt-3">Add</MatButton>
+    }
 </MatDialogActions>
 
 @code
 {
     public ExpenseTracker.Shared.Models.BudgetItem BudgetItem { get; set; }
     private ExpenseTracker.Shared.Models.Category[] categories;
+    private bool isOpen = true;
 
     [CascadingParameter]
     public MatDialogReference DialogReference { get; set; }
