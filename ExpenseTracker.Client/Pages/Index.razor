@@ -2,44 +2,56 @@
 @inject HttpClient Http
 @inject IMatDialogService MatDialogService
 
-<h1 class="mb-5">Inkomster och utgifter i @DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture)</h1>
 
 @if (budget != null)
 {
-    <div class="mat-layout-grid">
-        <div class="mat-layout-grid-inner">
-            <div class="mat-layout-grid-cell">
-                <h4>Inkomster</h4>
-                <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Income)" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
-                    <MatTableHeader>
-                        <th>Kategori</th>
-                        <th>Summa</th>
-                    </MatTableHeader>
-                    <MatTableRow>
-                        <td>@context.Category.Name</td>
-                        <td>@String.Format("{0:C2}", @context.Amount)</td>
-                    </MatTableRow>
-                </MatTable>
-                <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Income))">Add Income</MatButton>
-            </div>
-            <div class="mat-layout-grid-cell">
-                <h4>Utgifter</h4>
-                <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense)" ShowPaging="true" PageSize="10" class="mat-elevation-z5">
-                    <MatTableHeader>
-                        <th>Kategori</th>
-                        <th>Summa</th>
-                        <th>Egen anteckning</th>
-                    </MatTableHeader>
-                    <MatTableRow>
-                        <td>@context.Category.Name</td>
-                        <td>@String.Format("{0:C2}", @context.Amount)</td>
-                        <td>@context.Name</td>
-                    </MatTableRow>
-                </MatTable>
-                <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Expense))">Add Expense</MatButton>
-            </div>
+<div class="mat-layout-grid">
+    <h1 class="mb-5">Sammanställning av inkomster och utgifter i @DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture)</h1>
+
+    <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell">
+            <h4>Inkomster</h4>
+            <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Income)" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
+                <MatTableHeader>
+                    <th>Kategori</th>
+                    <th>Summa</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.Category.Name</td>
+                    <td>@String.Format("{0:C2}", @context.Amount)</td>
+                </MatTableRow>
+            </MatTable>
+            <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Income))">Add Income</MatButton>
+        </div>
+        <div class="mat-layout-grid-cell">
+            <h4>Utgifter</h4>
+            <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense).GroupBy(big => big.Category.Name)" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
+                <MatTableHeader>
+                    <th>Kategori</th>
+                    <th>Summa</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.Key</td>
+                    <td>@String.Format("{0:C2}", @context.Sum(g => g.Amount))</td>
+                </MatTableRow>
+            </MatTable>
+            <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Expense))">Add Expense</MatButton>
         </div>
     </div>
+
+    <h1 style="margin-top:2em;">Detaljerad lista av utgifter</h1>
+    <MatList TwoLine="true">
+        @foreach (var expense in budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense))
+        {
+            <MatListItem>
+                <MatListItemText>
+                    <MatListItemPrimaryText>@expense.Category.Name: @String.Format("{0:C2}", expense.Amount)</MatListItemPrimaryText>
+                    <MatListItemSecondaryText>@expense.Name | @expense.DateTime</MatListItemSecondaryText>
+                </MatListItemText>
+            </MatListItem>
+        }
+    </MatList>
+</div>
 }
 else
 {
@@ -63,7 +75,7 @@ else
             if (result == null)
                 return;
 
-            result.DateTime = new DateTime(0);
+            result.DateTime = DateTime.Now;
             result.BudgetItemType = budgetItemType;
 
             var response = await Http.PostAsJsonAsync<ExpenseTracker.Shared.Models.BudgetItem>
@@ -74,9 +86,9 @@ else
             else
                 await GetBudget();
         }
-        catch (Exception e) 
-        { 
-            Console.WriteLine(e.Message); 
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
         }
     }
 }
