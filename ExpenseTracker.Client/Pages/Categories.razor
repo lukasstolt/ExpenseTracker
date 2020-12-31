@@ -2,11 +2,12 @@
 @inject HttpClient Http
 @inject IMatDialogService MatDialogService
 
-<h1 class="mb-5">Kategorier</h1>
 
 @if (categories != null)
 {
 <div class="mat-layout-grid">
+    <h1 class="mb-5">Kategorier</h1>
+
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell">
             <MatTable Items="@categories" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
