@@ -6,7 +6,9 @@
 @if (budget != null)
 {
 <div class="mat-layout-grid">
-    <h1 class="mb-5">Sammanställning av inkomster och utgifter i @DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture)</h1>
+    <h1 class="mb-5">Resultat för @DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture)
+        <span style="font-size:80%;color:@amountLeftColor()">@String.Format("{0:C2}", budget.AmountLeft())</span>
+    </h1>
 
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell">
@@ -18,7 +20,12 @@
                 </MatTableHeader>
                 <MatTableRow>
                     <td>@context.Category.Name</td>
-                    <td>@String.Format("{0:C2}", @context.Amount)</td>
+                    <td>
+                        @String.Format("{0:C2}", @context.Amount) <span style="font-size: 70%;font-weight:lighter;float:right;"> /
+                        @String.Format("{0:C2}", baseBudget.BudgetItems.Where(bi => bi.BudgetItemType == BudgetItemType.Income
+                        && bi.Category.Name == context.Category.Name).FirstOrDefault()?.Amount)
+                    </span>
+                </td>
                 </MatTableRow>
             </MatTable>
             <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Income))">Add Income</MatButton>
@@ -32,7 +39,9 @@
                 </MatTableHeader>
                 <MatTableRow>
                     <td>@context.Key</td>
-                    <td>@String.Format("{0:C2}", @context.Sum(g => g.Amount))</td>
+                    <td>@String.Format("{0:C2}", @context.Sum(g => g.Amount)) <span style="font-size: 70%;font-weight:lighter;float:right;"> /
+                            @String.Format("{0:C2}", baseBudget.BudgetItems.Where(bi => bi.BudgetItemType == BudgetItemType.Expense
+                            && bi.Category.Name == context.Key).FirstOrDefault()?.Amount)</span></td>
                 </MatTableRow>
             </MatTable>
             <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Expense))">Add Expense</MatButton>
@@ -60,11 +69,28 @@ else
 
 @code {
     private ExpenseTracker.Shared.Models.Budget budget;
+    private ExpenseTracker.Shared.Models.Budget baseBudget;
 
-    protected override async Task OnInitializedAsync() => await GetBudget();
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBudget();
+        await GetBaseBudget();
+    }
 
     private async Task GetBudget() =>
         budget = await Http.GetFromJsonAsync<ExpenseTracker.Shared.Models.Budget>("https://localhost:44398/api/Budgets/Current");
+
+    private async Task GetBaseBudget() =>
+        baseBudget = await Http.GetFromJsonAsync<ExpenseTracker.Shared.Models.Budget>("https://localhost:44398/api/Budgets/Base");
+
+    private string amountLeftColor()
+    {
+        if (budget.AmountLeft() > 0)
+            return "darkgreen";
+        else
+            return "darkred";
+
+    }
 
     async Task OpenAddBudgetItemDialog(BudgetItemType budgetItemType)
     {
