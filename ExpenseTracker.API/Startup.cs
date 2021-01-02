@@ -78,18 +78,6 @@ namespace ExpenseTracker.API
 		{
 			db.Database.EnsureCreated();
 
-			// Create standard categories
-			if(db.Categories.FirstOrDefault() == null)
-			{
-				// TODO - flytta till konfigurationsfil
-				db.Categories.Add(new Category { Name = "Boende" });
-				db.Categories.Add(new Category { Name = "Hem" });
-				db.Categories.Add(new Category { Name = "Mat" });
-				db.Categories.Add(new Category { Name = "Hälsa / skönhet" });
-
-				db.SaveChanges();
-			}
-
 			if(db.Budgets.FirstOrDefault() == null)
 			{
 				db.Budgets.Add(new Budget
