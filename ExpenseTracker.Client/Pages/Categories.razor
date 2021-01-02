@@ -3,21 +3,24 @@
 @inject IMatDialogService MatDialogService
 
 
-@if (categories != null)
+@if (_categories != null)
 {
 <div class="mat-layout-grid">
     <h1 class="mb-5">Kategorier</h1>
 
     <div class="mat-layout-grid-inner">
-        <div class="mat-layout-grid-cell">
-            <MatTable Items="@categories" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
+        <div class="mat-layout-grid-cell" style="max-width:100%;width:auto;">
+            <MatTable Items="@_categories" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
                 <MatTableHeader>
                     <th>Id</th>
                     <th>Namn</th>
                 </MatTableHeader>
                 <MatTableRow>
                     <td>@context.Id</td>
-                    <td>@context.Name</td>
+                    <td>
+                        <span style="line-height:36px;">@context.Name</span>
+                        <MatButton OnClick="@(_ => RemoveCategory(context.Id))" Style="float:right;">X</MatButton>
+                    </td>
                 </MatTableRow>
             </MatTable>
             <MatButton OnClick="@(_ => OpenAddCategoryDialog())">Lägg till kategori</MatButton>
@@ -28,12 +31,21 @@
 
 @code
 {
-    private Category[] categories;
+    private Category[] _categories;
 
     protected override async Task OnInitializedAsync() => await GetCategories();
 
-    private async Task GetCategories() => categories = await Http.GetFromJsonAsync<Category[]>(
+    private async Task GetCategories()
+    {
+        _categories = await Http.GetFromJsonAsync<Category[]>(
             "https://localhost:44398/api/Budgets/Categories");
+    }
+
+    private async Task RemoveCategory(int id)
+    {
+        await Http.DeleteAsync($"https://localhost:44398/api/Budgets/Categories/{id}");
+        await GetCategories();
+    }
 
     async Task OpenAddCategoryDialog()
     {

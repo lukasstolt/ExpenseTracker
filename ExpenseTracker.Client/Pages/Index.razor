@@ -6,12 +6,13 @@
 @if (budget != null)
 {
 <div class="mat-layout-grid">
-    <h1 class="mb-5">Resultat för @DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture)
+    <h1 class="mb-5">
+        Resultat för @DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture)
         <span style="font-size:80%;color:@amountLeftColor()">@String.Format("{0:C2}", budget.AmountLeft())</span>
     </h1>
 
     <div class="mat-layout-grid-inner">
-        <div class="mat-layout-grid-cell">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
             <h4>Inkomster</h4>
             <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Income)" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
                 <MatTableHeader>
@@ -21,16 +22,17 @@
                 <MatTableRow>
                     <td>@context.Category.Name</td>
                     <td>
-                        @String.Format("{0:C2}", @context.Amount) <span style="font-size: 70%;font-weight:lighter;float:right;"> /
-                        @String.Format("{0:C2}", baseBudget.BudgetItems.Where(bi => bi.BudgetItemType == BudgetItemType.Income
-                        && bi.Category.Name == context.Category.Name).FirstOrDefault()?.Amount)
-                    </span>
-                </td>
+                        @String.Format("{0:C2}", @context.Amount) <span style="font-size: 70%;font-weight:lighter;float:right;">
+                            /
+                            @String.Format("{0:C2}", baseBudget.BudgetItems.Where(bi => bi.BudgetItemType == BudgetItemType.Income
+                            && bi.Category.Name == context.Category.Name).FirstOrDefault()?.Amount)
+                        </span>
+                    </td>
                 </MatTableRow>
             </MatTable>
-            <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Income))">Add Income</MatButton>
+            <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Income))">Lägg till inkomst</MatButton>
         </div>
-        <div class="mat-layout-grid-cell">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
             <h4>Utgifter</h4>
             <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense).GroupBy(big => big.Category.Name)" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
                 <MatTableHeader>
@@ -39,16 +41,22 @@
                 </MatTableHeader>
                 <MatTableRow>
                     <td>@context.Key</td>
-                    <td>@String.Format("{0:C2}", @context.Sum(g => g.Amount)) <span style="font-size: 70%;font-weight:lighter;float:right;"> /
-                            @String.Format("{0:C2}", baseBudget.BudgetItems.Where(bi => bi.BudgetItemType == BudgetItemType.Expense
-                            && bi.Category.Name == context.Key).FirstOrDefault()?.Amount)</span></td>
+                    <td>
+                        @String.Format("{0:C2}", @context.Sum(g => g.Amount)) <span style="font-size: 70%;font-weight:lighter;float:right;">
+                        /
+                        @String.Format("{0:C2}", baseBudget.BudgetItems.Where(bi => bi.BudgetItemType == BudgetItemType.Expense
+                        && bi.Category.Name == context.Key).FirstOrDefault()?.Amount) </span>
+                    </td>
                 </MatTableRow>
-            </MatTable>
-            <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Expense))">Add Expense</MatButton>
+                </MatTable>
+            <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Expense))">Lägg till utgift</MatButton>
         </div>
     </div>
 
-    <h1 style="margin-top:2em;">Detaljerad lista av utgifter</h1>
+    @if (budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense).Count() > 0)
+    {
+        <h1 style="margin-top:2em;">Detaljerad lista av utgifter</h1>
+    }
     <MatList TwoLine="true">
         @foreach (var expense in budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense))
         {
@@ -57,10 +65,11 @@
                     <MatListItemPrimaryText>@expense.Category.Name: @String.Format("{0:C2}", expense.Amount)</MatListItemPrimaryText>
                     <MatListItemSecondaryText>@expense.Description | @expense.DateTime</MatListItemSecondaryText>
                 </MatListItemText>
+                <MatButton Class="ml-5" OnClick="@(_ => RemoveBudgetItem(budget.Id, expense.Id))">X</MatButton>
             </MatListItem>
         }
     </MatList>
-</div>
+    </div>
 }
 else
 {
@@ -82,6 +91,12 @@ else
 
     private async Task GetBaseBudget() =>
         baseBudget = await Http.GetFromJsonAsync<ExpenseTracker.Shared.Models.Budget>("https://localhost:44398/api/Budgets/Base");
+
+    private async Task RemoveBudgetItem(int id1, int id2)
+    {
+        await Http.DeleteAsync($"https://localhost:44398/api/Budgets/{id1}/Remove/{id2}");
+        await GetBudget();
+    }
 
     private string amountLeftColor()
     {

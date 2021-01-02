@@ -8,7 +8,7 @@
     <h1 class="mb-5">Budget</h1>
 
     <div class="mat-layout-grid-inner">
-        <div class="mat-layout-grid-cell">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
             <h4>Inkomster</h4>
             <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Income)" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
                 <MatTableHeader>
@@ -20,9 +20,9 @@
                     <td>@String.Format("{0:C2}", @context.Amount)</td>
                 </MatTableRow>
             </MatTable>
-            <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Income))">Add Income</MatButton>
+            <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Income))">Lägg till inkomst</MatButton>
         </div>
-        <div class="mat-layout-grid-cell">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
             <h4>Utgifter</h4>
             <MatTable Items="@budget.BudgetItems.Where(b => b.BudgetItemType == BudgetItemType.Expense)" ShowPaging="false" PageSize="50" class="mat-elevation-z5">
                 <MatTableHeader>
@@ -34,7 +34,7 @@
                     <td>@String.Format("{0:C2}", @context.Amount)</td>
                 </MatTableRow>
             </MatTable>
-            <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Expense))">Add Expense</MatButton>
+            <MatButton OnClick="@(_=>OpenAddBudgetItemDialog(BudgetItemType.Expense))">Lägg till utgift</MatButton>
         </div>
     </div>
 </div>
