@@ -100,7 +100,7 @@ namespace ExpenseTracker.API.Controllers
 			return Created($"/Categories", category);
 		}
 
-		[HttpDelete("Categories/Remove/{id}")]
+		[HttpDelete("Categories/{id}")]
 		public IActionResult RemoveCategory(int id)
 		{
 			try
