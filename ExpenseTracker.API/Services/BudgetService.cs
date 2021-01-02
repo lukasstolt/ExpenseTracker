@@ -66,12 +66,44 @@ namespace ExpenseTracker.API.Services
 		}
 
 		/// <summary>
+		/// Removes a budget id from the database
+		/// </summary>
+		/// <param name="id"></param>
+		public void RemoveBudgetItem(int budgetId, int budgetItemId)
+		{
+			var budgetItem = _db.Budgets.Include(b => b.BudgetItems)
+				.FirstOrDefault(b => b.Id == budgetId)
+				.BudgetItems.FirstOrDefault(bi => bi.Id == budgetItemId);
+
+			if (budgetItem == null)
+				throw new Exception("Not found");
+
+			_db.Remove(budgetItem);
+			_db.SaveChanges();
+		}
+
+		/// <summary>
 		/// Adds a category to the database
 		/// </summary>
 		/// <param name="category"></param>
 		public void AddCategory(Category category)
 		{
 			_db.Categories.Add(category);
+			_db.SaveChanges();
+		}
+
+		/// <summary>
+		/// Removes a category from the database
+		/// </summary>
+		/// <param name="id"></param>
+		public void RemoveCategory(int id)
+		{
+			var category = _db.Categories.SingleOrDefault(c => c.Id == id);
+
+			if (category == null)
+				throw new Exception("Not found");
+
+			_db.Categories.Remove(category);
 			_db.SaveChanges();
 		}
 

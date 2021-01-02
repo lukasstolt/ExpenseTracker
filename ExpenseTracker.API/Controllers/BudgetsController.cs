@@ -67,6 +67,23 @@ namespace ExpenseTracker.API.Controllers
 			return Created($"/{id}", budgetItem);
 		}
 
+		// DELETE api/Budgets/4/Remove/3
+		[HttpDelete("{budgetId}/Remove/{budgetItemId}")]
+		public IActionResult RemoveBudgetItem(int budgetId, int budgetItemId)
+		{
+			try
+			{
+				_budgetService.RemoveBudgetItem(budgetId, budgetItemId);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				return NotFound();
+			}
+
+			return Ok();
+		}
+
 		// POST api/Budgets/AddCategory
 		[HttpPost("AddCategory")]
 		public IActionResult AddCategory(Category category)
@@ -81,6 +98,22 @@ namespace ExpenseTracker.API.Controllers
 			}
 
 			return Created($"/Categories", category);
+		}
+
+		[HttpDelete("Categories/Remove/{id}")]
+		public IActionResult RemoveCategory(int id)
+		{
+			try
+			{
+				_budgetService.RemoveCategory(id);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				return NotFound();
+			}
+
+			return Ok();
 		}
 
 		[HttpGet("Categories")]
